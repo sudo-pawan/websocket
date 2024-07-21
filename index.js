@@ -15,7 +15,7 @@ const io = socketIo(server, {
 const PORT = process.env.PORT || 8080;
 
 io.on("connection", (socket) => {
-  socket.on("joinRoom", ({ group, page }) => {
+  socket.on("joinRoom", ({ group, page,user }) => {
     const room = `${group}-${page}`;
     socket.join(room);
     console.log(`${socket.id} joined room: ${room}`);
