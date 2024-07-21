@@ -18,12 +18,12 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", ({ group, page,user }) => {
     const room = `${group}-${page}`;
     socket.join(room);
-    console.log(`${socket.id} joined room: ${room}`);
-    socket.to(room).emit("userJoined", { userId: socket.id, group, page });
+    
+    socket.to(room).emit("userJoined", user);
 
     socket.on("disconnect", () => {
       console.log("user disconnected:", socket.id);
-      socket.to(room).emit("userLeft", { userId: socket.id, group, page });
+      socket.to(room).emit("userLeft",user);
     });
 
     socket.on("pageChange", (data) => {
