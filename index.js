@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
       socket.broadcast.to(room).emit("userLeft", user);
     });
 
-    socket.on("pageChange", (user,markdown) => {
+    socket.on("pageChange", ({user,markdown}) => {
       socket.broadcast.to(room).emit("pageChange", {user,markdown});
     });
   });
