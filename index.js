@@ -14,24 +14,52 @@ const io = socketIo(server, {
 
 const PORT = process.env.PORT || 8080;
 
+const userSocketMap = {};
+
+function getAllConnectedClients(roomId) {
+  return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
+    (socketId) => {
+      return {
+        socketId,
+        username: userSocketMap[socketId],
+      };
+    }
+  );
+}
+
 io.on("connection", (socket) => {
+  console.log("socket connected", socket.id);
+
   socket.on("joinRoom", ({ group, page, user }) => {
     const room = `${group}-${page}`;
+    userSocketMap[socket.id] = user;
     socket.join(room);
-    
-    // Notify other users in the room that a new user has joined
-    socket.broadcast.to(room).emit("userJoined", user);
 
-    socket.on("disconnect", () => {
-      console.log("user disconnected:", socket.id);
-      // Notify other users in the room that the user has left
-      socket.broadcast.to(room).emit("userLeft", user);
+    const clients = getAllConnectedClients(room);
+    clients.forEach(({ socketId }) => {
+      io.to(socketId).emit("userJoined", {
+        clients: clients.map(client => client.username), // Emit only usernames
+        user,
+      });
+    });
+
+    socket.on("disconnecting", () => {
+      const rooms = [...socket.rooms];
+      rooms.forEach((roomId) => {
+        socket.in(roomId).emit("userLeft", {
+          user: userSocketMap[socket.id],
+        });
+      });
+      delete userSocketMap[socket.id];
     });
 
     socket.on("pageChange", (data) => {
-      // Broadcast to all other clients in the room except the sender
-      socket.broadcast.to(room).emit("pageChange", data);
+      socket.in(room).emit("pageChange", data);
     });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected:", socket.id);
   });
 });
 
