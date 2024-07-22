@@ -15,26 +15,29 @@ const io = socketIo(server, {
 const PORT = process.env.PORT || 8080;
 
 io.on("connection", (socket) => {
-  socket.on("joinRoom", ({ group, page,user }) => {
+  socket.on("joinRoom", ({ group, page, user }) => {
     const room = `${group}-${page}`;
     socket.join(room);
     
+    // Notify other users in the room that a new user has joined
     socket.to(room).emit("userJoined", user);
 
     socket.on("disconnect", () => {
       console.log("user disconnected:", socket.id);
-      socket.to(room).emit("userLeft",user);
+      // Notify other users in the room that the user has left
+      socket.to(room).emit("userLeft", user);
     });
 
     socket.on("pageChange", (data) => {
+      // Notify other users in the room of the page change
       socket.to(room).emit("pageChange", data);
     });
   });
 });
 
-app.get("/",(req,res)=>{
-res.send("working")
-})
+app.get("/", (req, res) => {
+  res.send("working");
+});
 
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
