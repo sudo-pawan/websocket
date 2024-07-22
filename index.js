@@ -14,6 +14,8 @@ const io = socketIo(server, {
 
 const PORT = process.env.PORT || 8080;
 
+const usersJoiner = []
+
 io.on("connection", (socket) => {
   socket.on("joinRoom", ({ group, page, user }) => {
     const room = `${group}-${page}`;
@@ -21,12 +23,11 @@ io.on("connection", (socket) => {
     socket.broadcast.to(room).emit("userJoined", user);
 
     socket.on("disconnect", () => {
-      console.log("user disconnected:", socket.id);
       socket.broadcast.to(room).emit("userLeft", user);
     });
 
-    socket.on("pageChange", (data) => {
-      socket.broadcast.to(room).emit("pageChange", data);
+    socket.on("pageChange", (user,markdown) => {
+      socket.broadcast.to(room).emit("pageChange", {user,markdown});
     });
   });
 });
