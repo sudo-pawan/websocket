@@ -37,10 +37,12 @@ io.on("connection", (socket) => {
     });
 
    // handle create or add page 
-    socket.on("add-or-deletePage", ({ user}) => {
-      socket.broadcast.to(room).emit("add-or-deletePage", { user});
+    socket.on("addPage", ({ user}) => {
+      socket.broadcast.to(room).emit("addPage", { user});
     });
-   
+    socket.on("deletePage", ({ user}) => {
+      socket.broadcast.to(room).emit("deletePage", { user});
+    });
   });
 });
 
