@@ -43,6 +43,9 @@ io.on("connection", (socket) => {
     socket.on("deletePage", ({ user}) => {
       socket.broadcast.to(room).emit("deletePage", { user});
     });
+    socket.on("chnagePageName", ({ user}) => {
+      socket.broadcast.to(room).emit("chnagePageName", { user});
+    });
   });
 });
 
