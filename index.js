@@ -36,18 +36,11 @@ io.on("connection", (socket) => {
       socket.broadcast.to(room).emit("pageChange", { user, markdown });
     });
 
-    // WebRTC signaling
-    socket.on("offer", (data) => {
-      socket.broadcast.to(room).emit("offer", data);
+   // handle create or add page 
+    socket.on("add-or-deletePage", ({ user}) => {
+      socket.broadcast.to(room).emit("add-or-deletePage", { user});
     });
-
-    socket.on("answer", (data) => {
-      socket.broadcast.to(room).emit("answer", data);
-    });
-
-    socket.on("candidate", (data) => {
-      socket.broadcast.to(room).emit("candidate", data);
-    });
+   
   });
 });
 
