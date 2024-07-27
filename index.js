@@ -40,11 +40,11 @@ io.on("connection", (socket) => {
     socket.on("addPage", ({user}) => {
       socket.broadcast.to(room).emit("addPage",  {user});
     });
-    socket.on("deletePage", ( {user}) => {
-      socket.broadcast.to(room).emit("deletePage", {user});
+    socket.on("deletePage", ( {user,pageName}) => {
+      socket.broadcast.to(room).emit("deletePage", {user,pageName});
     });
-    socket.on("chnagePageName", ( {user}) => {
-      socket.broadcast.to(room).emit("changePageName",{user});
+    socket.on("changePageName", ( {user,oldPageName,newPageName}) => {
+      socket.broadcast.to(room).emit("changePageName",{user,oldPageName,newPageName});
     });
   });
 });
