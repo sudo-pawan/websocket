@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
       socket.broadcast.to(room).emit("deletePage", {user});
     });
     socket.on("chnagePageName", ( {user}) => {
-      socket.broadcast.to(room).emit("chnagePageName",{user});
+      socket.broadcast.to(room).emit("changePageName",{user});
     });
   });
 });
